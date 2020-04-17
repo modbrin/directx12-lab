@@ -14,6 +14,7 @@ public:
 		vertex_buffer_view = {};
 		fence_value = 0;
 		fence_event = nullptr;
+		aspect_ratio = static_cast<float> (width) / static_cast<float> (height);
 	};
 	virtual ~Renderer() {};
 
@@ -22,8 +23,8 @@ public:
 	virtual void OnRender();
 	virtual void OnDestroy();
 
-	virtual void OnKeyDown(UINT8 key) {};
-	virtual void OnKeyUp(UINT8 key) {};
+	virtual void OnKeyDown(UINT8 key) { OutputDebugString(L" Key down"); OutputDebugString(std::to_wstring(key).c_str()); };
+	virtual void OnKeyUp(UINT8 key) { OutputDebugString(L" Key up"); OutputDebugString(std::to_wstring(key).c_str()); };
 
 	UINT GetWidth() const { return width; }
 	UINT GetHeight() const { return height; }
@@ -33,6 +34,7 @@ protected:
 	UINT width;
 	UINT height;
 	std::wstring title;
+	float aspect_ratio;
 
 	static const UINT frame_number = 2;
 
