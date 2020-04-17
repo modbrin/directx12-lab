@@ -15,6 +15,12 @@ public:
 		fence_value = 0;
 		fence_event = nullptr;
 		aspect_ratio = static_cast<float> (width) / static_cast<float> (height);
+		vertices.clear();
+
+		mwp = XMMatrixIdentity();
+		world = XMMatrixTranslation(0, -1.f, 0) * XMMatrixScaling(.5f, .5f, .5f);
+		view = XMMatrixIdentity();
+		projection = XMMatrixPerspectiveFovLH(60.f * XM_PI / 180.f, aspect_ratio, 0.001f, 100.f);
 	};
 	virtual ~Renderer() {};
 
@@ -23,8 +29,8 @@ public:
 	virtual void OnRender();
 	virtual void OnDestroy();
 
-	virtual void OnKeyDown(UINT8 key) { OutputDebugString(L" Key down"); OutputDebugString(std::to_wstring(key).c_str()); };
-	virtual void OnKeyUp(UINT8 key) { OutputDebugString(L" Key up"); OutputDebugString(std::to_wstring(key).c_str()); };
+	virtual void OnKeyDown(UINT8 key);
+	virtual void OnKeyUp(UINT8 key);
 
 	UINT GetWidth() const { return width; }
 	UINT GetHeight() const { return height; }
@@ -43,6 +49,7 @@ protected:
 	ComPtr<ID3D12CommandQueue> command_queue;
 	ComPtr<IDXGISwapChain3> swap_chain;
 	ComPtr<ID3D12DescriptorHeap> rtv_heap;
+	ComPtr<ID3D12DescriptorHeap> cbv_heap;
 	UINT rtv_descriptor_size;
 	ComPtr<ID3D12Resource> render_targets[frame_number];
 	ComPtr<ID3D12CommandAllocator> command_allocator;
@@ -54,8 +61,13 @@ protected:
 	CD3DX12_RECT scissor_rect;
 
 	// Resources
+	std::vector<ColorVertex> vertices;
 	ComPtr<ID3D12Resource> vertex_buffer;
 	D3D12_VERTEX_BUFFER_VIEW vertex_buffer_view;
+
+	XMMATRIX mwp;
+	ComPtr<ID3D12Resource> constant_buffer;
+	UINT8* constant_buffer_data_begin;
 
 	// Synchronization objects.
 	UINT frame_index;
@@ -68,4 +80,14 @@ protected:
 	void PopulateCommandList();
 	void WaitForPreviousFrame();
 	std::wstring GetBinPath(std::wstring shader_file) const;
+
+	XMMATRIX world;
+	XMMATRIX view;
+	XMMATRIX projection;
+
+	XMVECTOR eye_position{0.f, 0.f, -2.f};
+	float angle = 0;
+
+	float delta_forward = 0;
+	float delta_rotation = 0;
 };

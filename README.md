@@ -1,6 +1,6 @@
-# DirectX12 labs
+# DirectX12 labs Solution
 
-This repo contains a template for Basics of DirectX 12 labs
+Solution for Basics of DirectX 12 labs by **Maksim Surkov**.
 
 ## Pre requirements
 
